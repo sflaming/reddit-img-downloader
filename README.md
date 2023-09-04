@@ -13,34 +13,34 @@ This script allows you to download images from Reddit subreddits using various o
 
     - Fetch 20 hot images from the "fujifilm" and "photography" subreddits:
         ```bash
-        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditImageDownloader -c -n 20
         ```
 
     - Fetch 20 top images of all time from the "fujifilm" and "photography" subreddits:
         ```bash
-        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20 --type top --time all
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditImageDownloader -c -n 20 -f top -r all -t
         ```
 
 ## Options
 
 - `-s`, `--subreddits`: Specify one or more subreddit names. (default: fujifilm)
-- `-d`, `--destination`: Set the destination path to save downloaded images. (default: ~/Pictures/RedditScreensaver)
+- `-d`, `--destination`: Set the destination path to save downloaded images. (default: ~/Pictures/RedditImageDownloader)
 - `-c`, `--clear`: Clear the destination folder before fetching new images.
 - `-n`, `--num-images`: Number of images to retrieve. (default: 15)
 - `-t`, `--title-as-filename`: Save image files with titles as filenames.
-- `--type`: Choose the post type: hot or top. (default: hot)
-- `--time`: Choose the time range for top posts: hour, day, week, month, year, all. (default: day)
+- `-f`, `--filter`: Choose the post filter: hot or top. (default: hot)
+- `-r`, `--range`: Choose the time range for top posts: hour, day, week, month, year, all. (default: day)
 
 ## Examples
 
-- Fetch 15 hot images from the "fujifilm" subreddit and save them in the default destination:
+- Fetch hot images from the "fujifilm" subreddit and save them in the default destination:
     ```bash
     ./get_reddit_images.py
     ```
 
-- Fetch top images of the week from the "photography" subreddit and save them with their titles as filenames:
+- Fetch top images of the day from the "photography" subreddit and save them with titles as filenames:
     ```bash
-    ./get_reddit_images.py -s photography -d ~/Desktop/Images -n 10 --type top --time week -t
+    ./get_reddit_images.py -s photography -d ~/Desktop/Images -n 10 -f top -r day -t
     ```
 
 ## License
