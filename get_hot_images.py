@@ -6,6 +6,7 @@ import sys
 import argparse
 import shutil
 
+
 def download_image(url, title, destination_dir, use_title_as_filename):
     if use_title_as_filename:
         filename = os.path.join(destination_dir, f"{title}.jpg")
@@ -14,11 +15,11 @@ def download_image(url, title, destination_dir, use_title_as_filename):
 
     if not os.path.exists(filename):
         try:
-            response = requests.get(url, headers={"User-Agent": "HotImagesDownloader"})
+            response = requests.get(url, headers={"User-Agent": "RedditImagesDownloader"})
             if response.status_code == 200:
                 with open(filename, 'wb') as f:
                     f.write(response.content)
-                print(f"Downloaded: {title, url}")
+                print(f"Downloaded: {title}")
             else:
                 print(f"Failed to download: {title} (Status code: {response.status_code})")
         except Exception as e:
@@ -26,17 +27,25 @@ def download_image(url, title, destination_dir, use_title_as_filename):
     else:
         print(f"Skipped (Already Exists): {title}")
 
-def fetch_hot_images(subreddits, destination_dir, num_images, use_title_as_filename):
+
+def fetch_reddit_images(subreddits, destination_dir, num_images, use_title_as_filename, post_type, time_range):
     for subreddit in subreddits:
         posts_processed = 0
         after = None
 
         while posts_processed < num_images:
-            # Fetch the next batch of hot posts from the subreddit using Reddit API
-            url = f"https://www.reddit.com/r/{subreddit}/hot/.json?limit=100"
+            # Build the URL based on user's choices
+            if post_type == "hot":
+                url = f"https://www.reddit.com/r/{subreddit}/hot/.json?limit=100"
+            elif post_type == "top":
+                url = f"https://www.reddit.com/r/{subreddit}/top/.json?t={time_range}&limit=100"
+            else:
+                print(f"Invalid post type: {post_type}")
+                break
+
             if after:
                 url += f"&after={after}"
-            headers = {"User-Agent": "HotImagesDownloader"}
+            headers = {"User-Agent": "RedditImagesDownloader"}
 
             try:
                 response = requests.get(url, headers=headers)
@@ -66,13 +75,16 @@ def fetch_hot_images(subreddits, destination_dir, num_images, use_title_as_filen
                 print(f"Unexpected Error for subreddit {subreddit}: {e}")
                 break
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Fetch hot images from subreddits.")
+    parser = argparse.ArgumentParser(description="Fetch images from subreddits.")
     parser.add_argument("-s", "--subreddits", nargs="+", default=["fujifilm"], help="Subreddit name(s) (default: fujifilm)")
     parser.add_argument("-d", "--destination", default="~/Pictures/RedditScreensaver", help="Destination path (default: ~/Pictures/RedditScreensaver)")
     parser.add_argument("-c", "--clear", action="store_true", help="Clear the folder before fetching new images")
-    parser.add_argument("-l", "--limit", type=int, default=15, help="Number of images to retrieve (default: 15)")
+    parser.add_argument("-n", "--num-images", type=int, default=15, help="Number of images to retrieve (default: 15)")
     parser.add_argument("-t", "--title-as-filename", action="store_true", help="Save image files with titles as filenames")
+    parser.add_argument("--type", choices=["hot", "top"], default="hot", help="Post type (default: hot)")
+    parser.add_argument("--time", choices=["hour", "day", "week", "month", "year", "all"], default="day", help="Time range for top posts (default: day)")
 
     args = parser.parse_args()
 
@@ -89,8 +101,9 @@ def main():
     # Create the destination directory if it doesn't exist
     os.makedirs(destination_dir, exist_ok=True)
 
-    # Fetch the specified number of hot images from the specified subreddits
-    fetch_hot_images(args.subreddits, destination_dir, args.limit, args.title_as_filename)
+    # Fetch the specified number of images using the user's choices
+    fetch_reddit_images(args.subreddits, destination_dir, args.num_images, args.title_as_filename, args.type, args.time)
+
 
 if __name__ == "__main__":
     main()
