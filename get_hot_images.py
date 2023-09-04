@@ -5,9 +5,10 @@ import requests
 import sys
 import argparse
 import shutil
+from exiftool import ExifTool
 
 
-def download_image(url, title, destination_dir, use_title_as_filename):
+def download_image(url, title, username, destination_dir, use_title_as_filename):
     if use_title_as_filename:
         filename = os.path.join(destination_dir, f"{title}.jpg")
     else:
@@ -20,6 +21,11 @@ def download_image(url, title, destination_dir, use_title_as_filename):
                 with open(filename, 'wb') as f:
                     f.write(response.content)
                 print(f"Downloaded: {title}")
+
+                # Add comments and URL to EXIF metadata using ExifTool
+                with ExifTool() as et:
+                    et.execute("-overwrite_original", f"-exif:FileSource=Reddit URL: {url}", filename)
+                    et.execute("-overwrite_original", f"-exif:UserComment=Reddit User: {username} | Title: {title}", filename)
             else:
                 print(f"Failed to download: {title} (Status code: {response.status_code})")
         except Exception as e:
@@ -56,7 +62,8 @@ def fetch_reddit_images(subreddits, destination_dir, num_images, use_title_as_fi
                     for post in data["data"]["children"]:
                         if "data" in post and "url" in post["data"] and post["data"]["url"].endswith(('.jpg', '.png', '.jpeg', '.gif')):
                             title = post["data"]["title"]
-                            download_image(post["data"]["url"], title, destination_dir, use_title_as_filename)
+                            username = post["data"]["author"]
+                            download_image(post["data"]["url"], title, username, destination_dir, use_title_as_filename)
                             posts_processed += 1
                             if posts_processed >= num_images:
                                 break
@@ -75,11 +82,10 @@ def fetch_reddit_images(subreddits, destination_dir, num_images, use_title_as_fi
                 print(f"Unexpected Error for subreddit {subreddit}: {e}")
                 break
 
-
 def main():
     parser = argparse.ArgumentParser(description="Fetch images from subreddits.")
     parser.add_argument("-s", "--subreddits", nargs="+", default=["fujifilm"], help="Subreddit name(s) (default: fujifilm)")
-    parser.add_argument("-d", "--destination", default="~/Pictures/RedditImageDownloader", help="Destination path (default: ~/Pictures/RedditImageDownloader)")
+    parser.add_argument("-d", "--destination", default="~/Pictures/RedditScreensaver", help="Destination path (default: ~/Pictures/RedditScreensaver)")
     parser.add_argument("-c", "--clear", action="store_true", help="Clear the folder before fetching new images")
     parser.add_argument("-n", "--num-images", type=int, default=15, help="Number of images to retrieve (default: 15)")
     parser.add_argument("-t", "--title-as-filename", action="store_true", help="Save image files with titles as filenames")
