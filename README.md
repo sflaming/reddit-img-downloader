@@ -1,21 +1,48 @@
-# Reddit Image Downloader
+# Reddit Images Downloader
 
-This fetches popular images from the Reddit subreddit(s) specified by `-s (--subreddits)` flag. Provide one or more space-separated subreddits to download the top 15 "hot" images.
+This script allows you to download images from Reddit subreddits using various options.
 
-Set the save location, the number of posts to check for images, and whether to clear the folder before downloading new images.
+## Usage
 
-For example, you can run the script with the `-l` option to specify the limit for the number of hot posts to retrieve. For example:
+1. Make the script executable:
+    ```bash
+    chmod +x get_reddit_images.py
+    ```
 
-```bash
-chmod +x get_hot_images.py
-./get_hot_images.py -s fujifilm fujix -d ~/Pictures/RedditScreensaver -c -l 20
-```
+2. Run the script with desired options. For example:
 
-This will fetch hot images from the "r/fujifilm" and "r/fujix" subreddits, store them in the "~/Pictures/RedditScreensaver" directory, clear the folder before fetching new images, and retrieve a maximum of 20 hot posts from each subreddit.
+    - Fetch 20 hot images from the "fujifilm" and "photography" subreddits:
+        ```bash
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20
+        ```
 
-If you don't provide the `--limit` option, the default limit of 15 will be used.
+    - Fetch 20 top images of all time from the "fujifilm" and "photography" subreddits:
+        ```bash
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20 --type top --time all
+        ```
 
-Feel free to customize the script further based on your needs. If you have any more questions or need further assistance, please let me know!
+## Options
 
-## Version notes
-0.1
+- `-s`, `--subreddits`: Specify one or more subreddit names. (default: fujifilm)
+- `-d`, `--destination`: Set the destination path to save downloaded images. (default: ~/Pictures/RedditScreensaver)
+- `-c`, `--clear`: Clear the destination folder before fetching new images.
+- `-n`, `--num-images`: Number of images to retrieve. (default: 15)
+- `-t`, `--title-as-filename`: Save image files with titles as filenames.
+- `--type`: Choose the post type: hot or top. (default: hot)
+- `--time`: Choose the time range for top posts: hour, day, week, month, year, all. (default: day)
+
+## Examples
+
+- Fetch 15 hot images from the "fujifilm" subreddit and save them in the default destination:
+    ```bash
+    ./get_reddit_images.py
+    ```
+
+- Fetch top images of the week from the "photography" subreddit and save them with their titles as filenames:
+    ```bash
+    ./get_reddit_images.py -s photography -d ~/Desktop/Images -n 10 --type top --time week -t
+    ```
+
+## License
+
+This script is licensed under the [MIT License](LICENSE).
