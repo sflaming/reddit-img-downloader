@@ -60,13 +60,22 @@ def fetch_reddit_images(subreddits, destination_dir, num_images, use_title_as_fi
 
                 if "data" in data and "children" in data["data"]:
                     for post in data["data"]["children"]:
-                        if "data" in post and "url" in post["data"] and post["data"]["url"].endswith(('.jpg', '.png', '.jpeg', '.gif')):
+                        if "data" in post and "is_gallery" in post["data"] and post["data"]["is_gallery"]:
+                            title = post["data"]["title"]
+                            username = post["data"]["author"]
+                            gallery_images = post["data"]["gallery_data"]["items"]
+                            gallery_urls = [item["media_id"] for item in gallery_images]
+                            for gallery_url in gallery_urls:
+                                download_image(f"https://i.redd.it/{gallery_url}.jpg", title, username, destination_dir, use_title_as_filename)
+                            posts_processed += 1
+                        elif "data" in post and "url" in post["data"] and post["data"]["url"].endswith(('.jpg', '.png', '.jpeg', '.gif')):
                             title = post["data"]["title"]
                             username = post["data"]["author"]
                             download_image(post["data"]["url"], title, username, destination_dir, use_title_as_filename)
                             posts_processed += 1
-                            if posts_processed >= num_images:
-                                break
+
+                        if posts_processed >= num_images:
+                            break
                 else:
                     print(f"Failed to retrieve data from subreddit: {subreddit}")
                     break
@@ -81,6 +90,7 @@ def fetch_reddit_images(subreddits, destination_dir, num_images, use_title_as_fi
             except Exception as e:
                 print(f"Unexpected Error for subreddit {subreddit}: {e}")
                 break
+
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch images from subreddits.")

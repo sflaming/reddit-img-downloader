@@ -1,6 +1,13 @@
-# Reddit Images Downloader
+~~# Reddit Images Downloader with Metadata
 
-This script allows you to download images from Reddit subreddits using various options.
+This script downloads popular images from any Reddit subreddit.
+
+## Features
+
+- Download images from one or more subreddits.
+- Images are saved with the URL, username, and title of the original post in EXIF metadata.
+- Supports either hot or top posts, with all time range options for top posts.
+- Customize the destination folder, number of images, and more.
 
 ## Usage
 
@@ -13,18 +20,18 @@ This script allows you to download images from Reddit subreddits using various o
 
     - Fetch 20 hot images from the "fujifilm" and "photography" subreddits:
         ```bash
-        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditImageDownloader -c -n 20
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20
         ```
 
     - Fetch 20 top images of all time from the "fujifilm" and "photography" subreddits:
         ```bash
-        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditImageDownloader -c -n 20 -f top -r all -t
+        ./get_reddit_images.py -s fujifilm photography -d ~/Pictures/RedditScreensaver -c -n 20 -f top -r all
         ```
 
 ## Options
 
 - `-s`, `--subreddits`: Specify one or more subreddit names. (default: fujifilm)
-- `-d`, `--destination`: Set the destination path to save downloaded images. (default: ~/Pictures/RedditImageDownloader)
+- `-d`, `--destination`: Set the destination path to save downloaded images. (default: ~/Pictures/RedditScreensaver)
 - `-c`, `--clear`: Clear the destination folder before fetching new images.
 - `-n`, `--num-images`: Number of images to retrieve. (default: 15)
 - `-t`, `--title-as-filename`: Save image files with titles as filenames.
@@ -43,6 +50,11 @@ This script allows you to download images from Reddit subreddits using various o
     ./get_reddit_images.py -s photography -d ~/Desktop/Images -n 10 -f top -r day -t
     ```
 
+## Metadata
+
+- The URL is saved to the File Source EXIF field.
+- The username and post title are saved to the User Comment EXIF field. 
+
 ## License
 
-This script is licensed under the [MIT License](LICENSE).
+This script is licensed under the [MIT License](LICENSE).~~
